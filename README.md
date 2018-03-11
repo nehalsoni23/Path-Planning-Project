@@ -56,8 +56,6 @@ the path has processed since last time.
 
 2. There will be some latency between the simulator running and the path planner returning a path, with optimized code usually its not very long maybe just 1-3 time steps. During this delay the simulator will continue using points that it was last given, because of this its a good idea to store the last points you have used so you can have a smooth transition. previous_path_x, and previous_path_y can be helpful for this transition since they show the last points given to the simulator controller with the processed points already removed. You would either return a path that extends this previous path or make sure to create a new path that has a smooth transition with this last path.
 
----
-
 ## Dependencies
 
 * cmake >= 3.5
@@ -78,8 +76,10 @@ the path has processed since last time.
     cd uWebSockets
     git checkout e94b6e1
     ```
-	
-### Reflection ###
+
+---
+
+## Reflection
 
 * In order to make the car drive autonomously we need to generate waypoints which our car will be following. I am generating 50 points at a time as shown in project walkthrough video. Rather than generating it from 0 to 50 points every time, I am using previous points as a reference line. The previous points are the left points which our car hasn't covered in the last iteration. Also, in order to generate this points, spline library is being used. It is a really helpful resource for doing this project and creating smooth trajectories. http://kluge.in-chemnitz.de/opensource/spline/, the spline function is in a single header file is really easy to use.
 
@@ -89,17 +89,17 @@ This data gives us the information consisting of s, d, x, y co-ordinates. From w
 
 * To calculate the scenario where a lane change is desired, I have performed cost calculation of each possible lane. The code block to calculate the best lane to drive in written from 371 to 438. Following actions are performed to decide if it is safe to keep driving in a current lane with the desired velocity or to change the lane based on cost:
 
-    *1. Based on which lane we are in, possible lanes are being calculated. In order to calculate the cost, there are certain conditions which contribute to the higher cost. If a possible lane is not current lane then high cost will be added.
+    * 1. Based on which lane we are in, possible lanes are being calculated. In order to calculate the cost, there are certain conditions which contribute to the higher cost. If a possible lane is not current lane then high cost will be added.
     
-    *2. For each such lane, it's average lane speed is being calculated. The code to find the average speed of the lane can be found from line 299 to 337. 
+    * 2. For each such lane, it's average lane speed is being calculated. The code to find the average speed of the lane can be found from line 299 to 337. 
     
-    *3. Now the next step is to calculate the best lane to drive. First, based on the average speed of the targeted lane from the 2nd point, cost calculation is performed. Lower the speed, higher the cost. Then, all the car_ids in the targeted lane are collected using `getCarsOfTargetLane` method. Then, using `getClosestDistanceFromCar` method, closest distance of another car to our car is calculated. Both the car ahead and/or behind of our car are considered to find the closest distance. If it is lesser than permissible distance then the high cost value will be incremented.
+    * 3. Now the next step is to calculate the best lane to drive. First, based on the average speed of the targeted lane from the 2nd point, cost calculation is performed. Lower the speed, higher the cost. Then, all the car_ids in the targeted lane are collected using `getCarsOfTargetLane` method. Then, using `getClosestDistanceFromCar` method, closest distance of another car to our car is calculated. Both the car ahead and/or behind of our car are considered to find the closest distance. If it is lesser than permissible distance then the high cost value will be incremented.
     
-    *4. From all the possible lanes, the low cost lane will be picked and a car will be shifted to that lane. It is possible that even though there is a car very close to our car in the current lane, staying in current lane will be more plausible based on the other lane's speed and distance from other cars.
+    * 4. From all the possible lanes, the low cost lane will be picked and a car will be shifted to that lane. It is possible that even though there is a car very close to our car in the current lane, staying in current lane will be more plausible based on the other lane's speed and distance from other cars.
     
 * The code lines from 434 to 438 contains the logic of speeding up when there is no vehicle in front of us at a distance of at least 30 meters and the path is clear to accelerate the vehicle in order to achieve the speed limit of 50 mph.
 
-### Results ###
+## Results
 
 Following are the screenshots of a car driving in the simulator in different scenarios:
 
